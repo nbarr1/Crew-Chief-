@@ -45,11 +45,11 @@ Higher tiers = faster play speed, tighter reaction windows, up-tempo snaps, more
 
 Foul catalog with phase (pre-snap / at-snap / live-ball / dead-ball), yardage, auto-first-down, loss-of-down, and enforcement spot (previous spot, spot of foul, dead-ball spot, all-but-one principle): False Start (5, dead-ball spot), Offside/Encroachment (5), Offensive Holding (10, all-but-one), Defensive Holding (5, auto 1st), DPI (15, auto 1st), OPI (10), Face Mask (15, auto 1st), Horse Collar (15, auto 1st), Unnecessary Roughness (15, auto 1st), Roughing the Passer (15, auto 1st), Illegal Block in the Back (10), Intentional Grounding (5, loss of down, spot of foul).
 
-The enforcement engine must correctly handle: half-the-distance-to-the-goal, automatic first downs, loss of down, accept/decline decisions, and down/distance recomputation. **This engine must be pure, deterministic, headless C++ with a full automated test suite** (Unreal Automation Framework) — it is the heart of the game and was fully unit-tested in the original.
+The enforcement engine must correctly handle: half-the-distance-to-the-goal, automatic first downs, loss of down, accept/decline decisions, and down/distance recomputation. **This engine must be pure, deterministic, headless C++ with a full automated test suite** (Unreal Automation Framework) — it is the heart of the game and was unit-tested in the original, though never actually wired into gameplay there — connect it properly.
 
 ## Play Simulation (port the model)
 
-A headless simulator generates ground truth before animation: play type (inside/outside run, short/deep pass, punt, field goal, kickoff), yardage outcome from tuned probability tables, incompletions, turnovers, touchdowns, and probabilistic **TrueFoulEvent** injection (foul type, committing player jersey number, foul yard line) weighted by real-world foul frequency. The 3D presentation layer then *performs* that scripted outcome with animation — judgment gameplay stays fair and gradeable because truth exists independently of rendering.
+A headless simulator generates ground truth before animation: play type (inside/outside run, short/deep pass, punt, field goal, kickoff), yardage outcome from tuned probability tables, incompletions, turnovers, touchdowns, and probabilistic **TrueFoulEvent** injection (foul type, committing player jersey number, foul yard line) injected at a flat 15% per play, chosen uniformly across the catalog in the original — condition this on play type and plausible officiating frequency in the port. The 3D presentation layer then *performs* that scripted outcome with animation — judgment gameplay stays fair and gradeable because truth exists independently of rendering.
 
 ## Unreal Engine 5 Direction — Lifelike Graphics
 
