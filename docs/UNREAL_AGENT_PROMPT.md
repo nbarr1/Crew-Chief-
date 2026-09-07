@@ -22,12 +22,12 @@ ladder from Youth League to the Professional Championship Tier.
 This is a **port with fixes**, not a greenfield design. An Android version of this game exists in this
 repository, fully designed and partially implemented. Its design data is authoritative and given below. Its
 implementation has substantial gaps, also catalogued below. **Port Section A verbatim. Fix Section B — do not
-reproduce it.**
+reproduce it. Hit the fidelity bar in Section C.**
 
 ## Your posture as an agent
 
 - You drive the editor. Create the assets, don't just describe them.
-- Work milestone by milestone (Section F). Do not start a milestone until the previous one's acceptance
+- Work milestone by milestone (Section G). Do not start a milestone until the previous one's acceptance
   criteria pass.
 - After each milestone, run the automation test suite and a Play-In-Editor session, and confirm the stated
   acceptance criteria yourself before moving on.
@@ -59,6 +59,10 @@ conflicts with this constraint, the constraint wins.
 Use the fictional teams the project already established: **Ironwood Forge, Cascades Osprey, Metro Rail, Coastal
 Gators, Summit Raptors, Highland Stags, Pinecrest Badgers, Valley Vipers.** Extend that list in the same
 naming register.
+
+This constraint governs your reference material too. Section C has you study commercial football games for
+fidelity — study them, match their quality bar, and author everything yourself. Never extract an asset from
+them and never carry a licensed team, stadium, or likeness across.
 
 ### 2. The simulation and rules core must be pure, headless C++.
 
@@ -395,8 +399,9 @@ never sees a duplicate of themselves.
 formation laterally over ~1 second. In the source this is decorative. **Make it matter** — illegal motion and
 illegal shift are real calls for the Line Judge.
 
-**Live ball duration** in the source is ~1.5 seconds (45 frames at 33 ms). That is a *floor*, not a target: with
-real animation, plays should run to their natural length. What matters is that the reaction window stays tight
+**Live ball duration** in the source is ~1.5 seconds (45 frames at 33 ms). That is a placeholder, not a target:
+with real animation, plays should run to their natural length. Take actual play length, snap-to-snap timing,
+and tempo from the reference footage in Section C.2. What matters is that the reaction window stays tight
 enough to demand attention.
 
 ## A.10 Visual identity
@@ -599,11 +604,105 @@ records included so Film Study survives a reinstall.
 
 ---
 
-# SECTION C — EDITOR BUILD INSTRUCTIONS
+# SECTION C — GAMEPLAY REFERENCE: COLLEGE FOOTBALL FOOTAGE
+
+Use gameplay footage of **EA Sports College Football 26 and 27** as your fidelity benchmark. College football is
+the correct reference for this project specifically: four of the six tiers are collegiate or below, the 7- and
+8-official crew mechanics are collegiate, and the hash marks specified in A.10 are already collegiate spacing.
+
+Your goal is that a Crew Chief play, watched with the HUD off, is indistinguishable in motion quality and
+atmosphere from a play in those games — and then that everything about the *player's relationship* to that play
+is inverted.
+
+## C.1 What you take from it, and what you do not
+
+Take **observation only**: how football looks, moves, sounds, and paces on screen. Watching a competitor and
+matching its quality bar is ordinary practice. Characterize what you see, then author your own assets to that
+standard.
+
+Do not take anything transferable:
+
+- **No asset extraction.** Do not rip or import models, animations, motion capture data, textures, audio, or
+  shaders from the games or their files.
+- **No licensed content.** No real schools, conferences, stadiums, logos, uniforms, helmets, mascots, fight
+  songs, or player likenesses. Those games license them; Constraint 1 forbids them here regardless.
+- **No interface trade dress.** Do not reproduce EA's HUD, score bug, menus, play-call screens, or replay
+  wipes. Build your own broadcast language from the palette in A.10.
+
+Match the **bar**, author the **content**. If a stadium's lighting is useful reference, build a fictional
+stadium that lights like it.
+
+## C.2 What to extract
+
+| Area | What to characterize |
+|---|---|
+| **Player movement** | Locomotion weight, acceleration and deceleration, cut sharpness, momentum on contact, how a 300-lb lineman moves differently from a slot receiver |
+| **Line play** | Blocking engagements, hand fighting, double teams, pass sets, how a hold actually *looks* when it happens in traffic — this is your foul-readability reference |
+| **Ball skills** | QB drops and throwing motion, route breaks, catch and contested-catch animation, tackle variety, ball security and fumbles |
+| **Tempo** | Time between snaps, huddle vs. no-huddle, play clock behavior, substitution flow, how long a play actually lasts from snap to whistle |
+| **Play vocabulary** | Formation variety, motion and shifts, RPOs, option looks, tempo offenses, special teams alignments |
+| **Presentation** | Crowd density and behavior, sideline population, lighting for day and night games, weather, turf wear, chain crew operation |
+| **Audio** | Crowd beds and reactions, contact sounds, PA, sideline chatter, whistle |
+
+Three of these directly correct defects in Section B:
+
+- **Tempo** fixes B.9. The Android build's ~1.5-second live-ball window and total absence of a clock are
+  placeholders. Real play length, real play-clock pressure, and real up-tempo sequences are what make the
+  Center Judge's spotting speed and the Back Judge's play-clock duty into actual mechanics.
+- **Play vocabulary** expands A.9. Three formations is a placeholder; college football's formation and motion
+  variety is the target, and it is what makes pre-snap reading (illegal formation, illegal motion, illegal
+  shift, numbering) a real officiating problem rather than a memorized one.
+- **Line play** informs B.10. Watching which fouls plausibly arise from which play types is how you build the
+  conditioned foul model that replaces the flat uniform 15%.
+
+## C.3 Watch the officials
+
+This is the part no other reference gives you, and the reason this section exists.
+
+Those games render officials on the field. In footage, **track them rather than the ball.** For each play type,
+note: where each official stands before the snap, how they move once the ball is live, who follows the runner
+and who holds the line of scrimmage, who covers the sideline, when and how a flag is thrown, how the ball is
+spotted and relayed, how the chain crew is operated, and how signals are given after a foul.
+
+Use this to sanity-check the station coordinates in A.2 and to author the officials' own animation set — the
+mechanics of officiating (the walk to the spot, the wind, the flag toss, the signal) are the animations your
+game needs most and that no football game has ever needed to do well, because no football game has ever put the
+camera there.
+
+Broadcast footage of real college games is equally good reference for this, and better in some respects, since
+the officials are real and the mechanics are correct.
+
+## C.4 The inversion
+
+Everything above is reference for **what happens in the world**. None of it is reference for **how the player
+experiences it**. Invert deliberately:
+
+| College Football 26/27 | Crew Chief |
+|---|---|
+| Camera behind the QB or a broadcast angle | First person, from the assigned official's station and eye height |
+| You control an athlete and execute | You control an official and *judge* |
+| The HUD tells you the play and the situation | You read the formation and situation yourself |
+| Penalties are events that happen to you | Penalties are your decision, and your decision is graded |
+| Success is yards, points, wins | Success is accuracy, positioning, and crew trust |
+| The camera follows the ball | The ball is often the wrong thing to watch — your keys are elsewhere |
+
+The last row is the design thesis. In a football game the ball is the point; in an officiating game, watching
+the ball instead of your keys is exactly how you miss the hold that decides the drive. Build the cameras and
+the animation so that the temptation to ball-watch exists and is punished.
+
+## C.5 If you cannot process video directly
+
+If your tooling cannot ingest video, do not skip this section — convert it into an asset the build can use.
+Extract frames at a fixed interval, work from those; or ask the user to supply the footage as a structured
+reference document covering the C.2 table. Then commit that characterization to
+`docs/GAMEPLAY_REFERENCE.md` in this repo so the observations are reviewable, versioned, and cited by the
+animation and tempo work rather than living only in your context.
+
+# SECTION D — EDITOR BUILD INSTRUCTIONS
 
 You have live editor control. Create these assets concretely.
 
-## C.1 Project and modules
+## D.1 Project and modules
 
 - UE **5.4+**, C++ project named `CrewChief`, Windows target, 64-bit.
 - Modules (C++ only where marked pure — no engine rendering dependencies):
@@ -615,7 +714,7 @@ You have live editor control. Create these assets concretely.
   - `CrewChiefGame` — actors, pawns, controllers, animation, UI.
 - Blueprints only for content wiring and UI. All logic lives in C++.
 
-## C.2 Input — Enhanced Input
+## D.2 Input — Enhanced Input
 
 Create Input Mapping Context **`IMC_Official`** with these Input Actions:
 
@@ -637,7 +736,7 @@ Create Input Mapping Context **`IMC_Official`** with these Input Actions:
 Haptics carry real information: a tick per half yard while spotting, a thump on the snap, impact rumble on
 collisions, a sharp pulse on the whistle. Support full rebinding. Keyboard and mouse are secondary but complete.
 
-## C.3 Cameras
+## D.3 Cameras
 
 Five perspectives, switchable at any time, matching the Android build:
 
@@ -651,7 +750,7 @@ Five perspectives, switchable at any time, matching the Android build:
 
 First person is primary and is what grading assumes.
 
-## C.4 Blueprints and actors to create
+## D.4 Blueprints and actors to create
 
 - `BP_CrewChiefGameMode`, `BP_OfficialController`, `BP_OfficialPawn` (nine position variants driven by data).
 - `BP_PlayerCharacter` — modular, team-colored, with a jersey number decal driven from the sim.
@@ -664,7 +763,7 @@ First person is primary and is what grading assumes.
 - `WBP_HUD`, `WBP_PenaltyReport`, `WBP_ReviewCard`, `WBP_CareerHub`, `WBP_FilmStudy`, `WBP_RulesReference` —
   all fully gamepad-navigable (Common UI recommended).
 
-## C.5 Rendering and lighting
+## D.5 Rendering and lighting
 
 - Enable **Lumen** GI and reflections, **Nanite** for stadium geometry, **Virtual Shadow Maps**.
 - The signature look is a **night game under floodlights**: volumetric light shafts, atmospheric haze, bloom on
@@ -678,13 +777,13 @@ First person is primary and is what grading assumes.
   fouls distinct at their materiality level, and let higher tiers inject subtler ones.
 - Target **60 FPS at 1440p on an RTX 3070-class GPU**; ship scalability presets.
 
-## C.6 Audio
+## D.6 Audio
 
 The Android build synthesizes three tones and has no audio assets. You need real sound: whistle (with variation),
 flag throw, pad collisions with impact weight, crowd beds per tier, stadium PA, chain crew, and the referee's
 announcement voice. Positional audio matters — hearing contact you didn't see is a legitimate officiating cue.
 
-## C.7 Film Study replay
+## D.7 Film Study replay
 
 Record actor transforms and the full sim state per snap so any snap can be scrubbed, rewound, and rewatched from
 any of the five cameras, with the grade, the ground truth, and the supervisor's note shown alongside. Because
@@ -692,7 +791,7 @@ snap seeds are stored (Constraint 3), replays are exact.
 
 ---
 
-# SECTION D — FULL SCOPE
+# SECTION E — FULL SCOPE
 
 All of this is in scope:
 
@@ -707,7 +806,7 @@ All of this is in scope:
 - **Rules Reference** — an in-game plain-language rulebook generated from the foul catalog.
 - **Cloud sync** — two-way, incremental, with snap records included.
 
-# SECTION E — CONTROLLER FEEL
+# SECTION F — CONTROLLER FEEL
 
 The touch build's verbs translate as follows. Preserve the *intent*, not the touch implementation:
 
@@ -721,7 +820,7 @@ The touch build's verbs translate as follows. Preserve the *intent*, not the tou
 | Penalty picker dialog | Radial menus: side → foul → jersey number |
 | (never built) signal | Y opens the signal radial; correct signal is graded |
 
-# SECTION F — MILESTONES
+# SECTION G — MILESTONES
 
 Each milestone ends with its acceptance criteria demonstrated **in the editor**.
 
@@ -737,10 +836,12 @@ plus new tests for the B-list fixes (turnover on downs, goal-line clamping, tier
 the same seed reproduces identical results.
 
 **M3 — Play performance layer.**
-22 animated players executing sim outcomes; all three formations; pre-snap motion; readable foul animations at
-two materiality levels.
+22 animated players executing sim outcomes; formation and motion vocabulary drawn from the Section C reference,
+not just the three formations in A.9; readable foul animations at two materiality levels; real play length and
+snap-to-snap tempo.
 *Accept:* PIE — snap a play, watch a scripted outcome perform; injected holding is visibly identifiable from the
-Umpire's position and *not* visible from the Field Judge's.
+Umpire's position and *not* visible from the Field Judge's. Side-by-side against the Section C footage, the
+motion quality and pacing read as the same sport.
 
 **M4 — Officiating verbs.**
 Key locking, flag throw with placement, whistle with timing grade, signal radial, penalty report with
@@ -761,8 +862,10 @@ B.16).
 *Accept:* a full simulated game runs end to end with valid state throughout, including special teams.
 
 **M7 — Lifelike pass.**
-MetaHumans, Lumen night lighting, crowds, audio, broadcast overlays, tunnel walkout, polish.
-*Accept:* 60 FPS at 1440p on target hardware; a stranger watching the screen would take it for a broadcast.
+MetaHumans, Lumen night lighting, crowds, audio, broadcast overlays, tunnel walkout, polish. Officials get their
+own animation set — the walk to the spot, the flag toss, the wind, the signals — per Section C.3.
+*Accept:* 60 FPS at 1440p on target hardware; a stranger watching the screen would take it for a broadcast, and
+would not be able to tell your atmosphere from the Section C reference.
 
 # DEFINITION OF DONE
 
